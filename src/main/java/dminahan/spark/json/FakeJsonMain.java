@@ -59,14 +59,14 @@ public void run(SparkSession sparkSession) {
       col("state"),
       col("updated"),
       col("user"),
-      col("originator)
+      col("originator")
    )
    .toDF("state","updated","user","originator");
       
-   members.createOrReplaceView("fake");
-      
-      //Execute a sample SQL (note that the results could be written to HDFS if desired)
-      Dataset<Row> sampleSqlResults=sparkSession.sql(
+   members.createOrReplaceTempView("fake");
+
+   //Execute a sample SQL (note that the results could be written to HDFS if desired)
+   Dataset<Row> sampleSqlResults=sparkSession.sql(
          "select state" +
          ", updated at updatedTime" +
          ", user" +
