@@ -1,5 +1,12 @@
 package dminahan.spark.json;
 
+//import org.apache.spark.sql.Dataset;
+//import org.apache.spark.sql.Row;
+//import org.apache.spark.sql.SparkSession;
+
+import static org.apache.spark.sql.functions.col;
+//import static org.apache.spark.sql.functions.explode;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.ForeachFunction;
