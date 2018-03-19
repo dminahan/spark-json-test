@@ -37,7 +37,7 @@ public void init() {
 }
    
 public void run(SparkSession sparkSession) {
-   Dataset<Row> df = sparkSession.read().json("fake.json");
+   Dataset<Row> df = sparkSession.read().json("fakeJson.json");
    df.printSchema();
    df.show(false);
    /*  Multi-line example in scala
