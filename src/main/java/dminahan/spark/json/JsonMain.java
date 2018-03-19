@@ -44,7 +44,7 @@ public void init() {
    */
 
 public void run(SparkSession sparkSession) {
-   Dataset<Row> df = spark.read.json("example.json");
+   Dataset<Row> df = sparkSession.read().json("example.json");
    df.printSchema();
    df.show(false);
    /*  Multi-line example in scala
