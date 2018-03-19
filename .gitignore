@@ -1,0 +1,16 @@
+#IntelliJ
+.idea/
+*.iml
+
+#Eclipse
+.classpath
+.project
+.settings/
+
+# Maven
+release.properties
+target/
+
+#Generated files
+derby.log
+testModels.parquet
