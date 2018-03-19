@@ -1,0 +1,2 @@
+{“originator”:”foo:123523”,“id”:”1234234-0r234f2-2342fg-23423”, “state”:”useful”, “updated”:”2018-03-16T09:33:45.567Z”,”user”:”user1”,“type”:”fake”,”comments”:”I’m just a really fake structure, could be any json object”}
+{“originator”:”bar:123523”,“id”:”4329734-3t654w7-5432k3-87654”, “state”:”dropped”, “updated”:”2018-03-19T08:21:32.347Z”,”user”:”user2”,“type”:”really fake”,”comments”:”I’m just a really fake structure, could be any json object”}
