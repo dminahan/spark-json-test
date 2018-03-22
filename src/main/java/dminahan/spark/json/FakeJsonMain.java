@@ -92,6 +92,9 @@ public void run(SparkSession sparkSession) {
    
    validJsonRecords.printSchema();
    validJsonRecords.show(false);
+   
+   //JsonRecordAggregator aggregator=new JsonRecordAggregator();
+   //Dataset<GoodJsonRecord> count
 
 }
  
