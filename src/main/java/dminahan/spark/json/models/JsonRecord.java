@@ -1,5 +1,4 @@
-//package dminahan.spark.json.models;
-package dminahan.spark.json;
+package dminahan.spark.json.models;
 
 public class JsonRecord {
     protected String user=null;

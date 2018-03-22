@@ -1,7 +1,6 @@
-//package dminahan.spark.json.filters;
-package dminahan.spark.json;
+package dminahan.spark.json.filters;
 
-//import dminahan.spark.json.models.JsonRecord;
+import dminahan.spark.json.models.JsonRecord;
 import org.apache.commons.lang.StringUtils;
 //import org.apache.commons.lang3.StringUtils;
 
@@ -31,7 +30,7 @@ public class RecordFilter {
        conditions=conditions.and(e->StringUtils.isNotBlank(e.getUpdated()));
        //Correct Originator filter needed
        //conditions=conditions.and(e->StringUtils.isNotBlank(e.getOriginator())&&e.getOriginator().startsWith("foo"));
-       conditions=conditions.and(e->StringUtils.isNotBlank(getOriginator()));
+       conditions=conditions.and(e->StringUtils.isNotBlank(e.getSystem()));
        return RecordFilter.isValidRecord(conditions, jsonRecord);
    }
    
@@ -49,12 +48,12 @@ public class RecordFilter {
    
    public static boolean filterGoodRecords(JsonRecord record) {
       Predicate<JsonRecord> conditions=e->inGoodStateList(e.getState());
-      return isValidRecord(conditions,jsonRecord);
+      return isValidRecord(conditions,record);
    }
    
    public static boolean filterBadRecords(JsonRecord record) {
       Predicate<JsonRecord> conditions=e->inBadStateList(e.getState());
-      return isValidRecord(conditions,jsonRecord);
+      return isValidRecord(conditions,record);
    }
    
    public static boolean inGoodStateList(String state) {
@@ -69,7 +68,7 @@ public class RecordFilter {
    public static boolean inBadStateList(String state) {
       //TODO:  Look to rework maybe
       int index=-1;
-      for(state!=null){
+      if(state!=null){
          index=Arrays.binarySearch(FAKE_BAD_LIST,state);
       }
       return index>-1;

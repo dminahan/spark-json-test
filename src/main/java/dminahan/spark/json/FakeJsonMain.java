@@ -15,6 +15,9 @@ import org.apache.spark.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dminahan.spark.json.filters.RecordFilter;
+import dminahan.spark.json.models.JsonRecord;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,13 +26,17 @@ import java.util.Random;
 
 public class FakeJsonMain implements Serializable {
 
-   public JavaSparkContext context;
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3582672377205640091L;
+public JavaSparkContext context;
    public SQLContext sqlContext=null;
    
-   private static final Logger LOGGER=LoggerFactory.getLogger(JsonMain.class);
+   private static final Logger LOGGER=LoggerFactory.getLogger(FakeJsonMain.class);
  
 public static void main(String args) {
-   JsonMain jsonMain= new JsonMain();
+	FakeJsonMain jsonMain= new FakeJsonMain();
    jsonMain.init();
    jsonMain.run(jsonMain.sqlContext.sparkSession());
 }
@@ -37,7 +44,7 @@ public static void main(String args) {
 public void init() {
    String master="local[*]";
    SparkConf conf =new SparkConf()
-                .setAppName(JsonMain.class.getName())
+                .setAppName(FakeJsonMain.class.getName())
                 .setMaster(master);
     
    context=new JavaSparkContext(conf);
@@ -90,8 +97,8 @@ public void run(SparkSession sparkSession) {
    Dataset<JsonRecord> validRecords=members.as(Encoders.bean(JsonRecord.class)) //convert row to JsonRecord via encoder
       .filter(RecordFilter::filterInvalidRecord);  //filter out invalid json records
    
-   validJsonRecords.printSchema();
-   validJsonRecords.show(false);
+   validRecords.printSchema();
+   validRecords.show(false);
    
    //JsonRecordAggregator aggregator=new JsonRecordAggregator();
    //Dataset<GoodJsonRecord> count
