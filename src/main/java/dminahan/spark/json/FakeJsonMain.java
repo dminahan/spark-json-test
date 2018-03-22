@@ -78,7 +78,7 @@ public void run(SparkSession sparkSession) {
    //Execute a sample SQL (note that the results could be written to HDFS if desired)
    Dataset<Row> sampleSqlResults=sparkSession.sql(
          "select state" +
-         ", updated at updatedTime" +
+         ", updated as updatedTime" +
          ", user" +
          ", originator as source" +
          ", originator as uuid" +
