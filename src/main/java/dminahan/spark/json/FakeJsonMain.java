@@ -82,6 +82,13 @@ public void run(SparkSession sparkSession) {
    val mdf = spark.read.option("multiline", "true").json("multi.json")
    mdf.show(false)
    */
+   
+   //Trying to use filters and get typed Dataset
+   Dataset<JsonRecord> validRecords=members.as(Encoders.bean(JsonRecord.class)) //convert row to JsonRecord via encoder
+      .filter(RecordFilter::filterInvalidRecord);  //filter out invalid json records
+   
+   validJsonRecords.printSchema();
+   validJsonRecords.show(false);
 
 }
  
