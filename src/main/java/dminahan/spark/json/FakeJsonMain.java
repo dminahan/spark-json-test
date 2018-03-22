@@ -6,6 +6,7 @@ package dminahan.spark.json;
 
 import static org.apache.spark.sql.functions.col;
 //import static org.apache.spark.sql.functions.explode;
+import static org.apache.spark.sql.functions.substring_index;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -61,7 +62,9 @@ public void run(SparkSession sparkSession) {
       col("user"),
       col("originator")
    )
-   .toDF("state","updated","user","originator");
+   .withColumn("uuid", substring_index(col("originator"), ":", -1))
+   .withColumn("system", substring_index(col("originator"), ":", 1))
+   .toDF("state","updated","user","originator","uuid","system");
       
    members.createOrReplaceTempView("fake");
 
