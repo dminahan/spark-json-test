@@ -3,14 +3,27 @@ package dminahan.spark.json;
 
 //import dminahan.spark.json.models.JsonRecord;
 import org.apache.commons.lang.StringUtils;
+//import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Predicate;
+import java.util.Arrays;
 
 /**
  * Class to wrap some of the filtering logic into Predicate filters on raw records for 
  * complete processing in Spark
  */
 public class RecordFilter {
+   public static String[] FAKE_GOOD_LIST=new String[]{
+      "WORKING",
+      "GOOD",
+      "USEFUL"
+   };
+   
+   public static String[] FAKE_BAD_LIST=new String[]{
+      "BAD",
+      "DROP",
+      "NOTUSEFUL"        
+   };
 
    public static boolean filterInvalidRecord(JsonRecord jsonRecord) {
        Predicate<JsonRecord> conditions=e -> StringUtils.isNotBlank(e.getUser());
@@ -33,5 +46,33 @@ public class RecordFilter {
     public static<T> boolean isValidRecord(Predicate<T> condition, T record) {
         return record!=null && condition.test(record);
     }
+   
+   public static boolean filterGoodRecords(JsonRecord record) {
+      Predicate<JsonRecord> conditions=e->inGoodStateList(e.getState());
+      return isValidRecord(conditions,jsonRecord);
+   }
+   
+   public static boolean filterBadRecords(JsonRecord record) {
+      Predicate<JsonRecord> conditions=e->inBadStateList(e.getState());
+      return isValidRecord(conditions,jsonRecord);
+   }
+   
+   public static boolean inGoodStateList(String state) {
+      //TODO:  Look to rework maybe for contains vs current approach
+      int index=-1;
+      if(state!=null){
+         index=Arrays.binarySearch(FAKE_GOOD_LIST, state);
+      }
+      return index >-1;
+   }
+   
+   public static boolean inBadStateList(String state) {
+      //TODO:  Look to rework maybe
+      int index=-1;
+      for(state!=null){
+         index=Arrays.binarySearch(FAKE_BAD_LIST,state);
+      }
+      return index>-1;
+   }
    
 }
