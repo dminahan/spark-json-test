@@ -1,0 +1,41 @@
+//package dminahan.spark.json.models;
+package dminahan.spark.json;
+
+public class JsonRecord {
+    protected String user=null;
+    protected String state=null;
+    protected String updated=null;
+    protected String originator=null;
+    
+    public String getUser() {
+        return this.user;
+    }
+    
+    public void setUser(String user) {
+        this.user=user;
+    }
+    
+    public String getState() {
+        return this.state;
+    }
+    
+    public void setState(String state) {
+        this.state=state;
+    }
+    
+    public String getUpdated() {
+        return this.updated;
+    }
+    
+    public void setUpdated(String updated) {
+        this.updated=updated;
+    }
+    
+    public String getOriginator() {
+        return this.originator;
+    }
+    
+    public void setOriginator(String originator) {
+        this.originator=originator;
+    }
+}
