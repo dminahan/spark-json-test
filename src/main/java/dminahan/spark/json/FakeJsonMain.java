@@ -137,7 +137,7 @@ public void run(SparkSession sparkSession) {
 		                             .filter(JsonFilters::filterInvalidJsonMember);//Filter out invalid records
 	validJsonRecords.printSchema();
 	
-	Dataset<JsonFeedbackRecord> goodJsonRecords=validJsonRecords.filter(RecordFilters::filterGoodRecords)
+	Dataset<JsonFeedbackRecord> goodJsonRecords=validJsonRecords.filter(RecordFilter::filterGoodRecords)
 		           .withColumn("feedback", functions.lit(1))
 		           .drop("origintor")
 		           .drop("updated")
@@ -145,7 +145,7 @@ public void run(SparkSession sparkSession) {
 	goodJsonRecords.printSchema();
 	//goodJsonRecords.show(false);
 	
-	Dataset<JsonFeedbackRecord>badJsonRecords=validJsonRecords(RecordFilters::filterBadRecords)
+	Dataset<JsonFeedbackRecord>badJsonRecords=validJsonRecords(RecordFilter::filterBadRecords)
 		            .withColumn("feedback", functions.lit(0))
 		            .drop("originator")
 		            .drop("updated")
