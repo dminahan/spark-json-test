@@ -102,6 +102,73 @@ public void run(SparkSession sparkSession) {
    
    //JsonRecordAggregator aggregator=new JsonRecordAggregator();
    //Dataset<GoodJsonRecord> count
+   Dataset<Row> recordTemp=sparkSession.read().json("jsonExamples");
+	
+    //Dataset<Row> records=sparkSession.read().json("jsonExamples");
+    Dataset<Row> records=sparkSession.readStream().schema(recordTemp.schema())
+	          .json("jsonExamples");
+    records.printSchema();
+	
+    records.createOrReplaceTempView("haven_records");
+	
+    Dataset<Row> members=records.select(
+	    col("state"),
+            col("updated"),
+            col("user"),
+            col("originator")
+	)
+	.withColumn("uuid", substring_index(col("originator"), ":", -1))
+	.withColumn("system", substring_index(col("originator"), ":", 1))
+	.withColumn("feedback", functions.lit("-1").cast("int"))
+	.withColumn("timestamp", unix_timestamp(col("modified")"yyyy-MM-dd'T'HH:mm:ss:SSS'Z'"))
+	.toDF("state","updated","user","originator","uuid","system","feedback","timestamp");
+	
+	members.printSchema();
+	//members.show(false);
+	//System.out.println("Total records is: " + members.count());
+	
+	Dataset<JsonRecord> validJsonRecords=members.as(Encoders.bean(JsonRecord.class))
+		                             .filter(JsonFilters::filterInvalidJsonMember);//Filter out invalid records
+	validJsonRecords.printSchema();
+	
+	Dataset<JsonFeedbackRecord> goodJsonRecords=validJsonRecords.filter(JsonFilters::filterGoodRecords)
+		           .withColumn("feedback", functions.lit(1))
+		           .drop("origintor")
+		           .drop("updated")
+		           .as(Encoders.bean(JsonFeedbackRecord.class));
+	goodJsonRecords.printSchema();
+	//goodJsonRecords.show(false);
+	
+	Dataset<JsonFeedbackRecord>badJsonRecords=validJsonRecords(JsonFilters::filterBadRecords)
+		            .withColumn("feedback", functions.lit(0))
+		            .drop("originator")
+		            .drop("updated")
+		            .as(Encoders.bean(JsonFeedbackRecord.class));
+	badJsonRecords.printSchema();
+	//badJsonRecords.show(false);
+	
+	Dataset<JsonFeedbackRecord> allJsonFeedback=goodJsonRecords.union(badJsonRecords);
+	allJsonFeedback.printSchema();
+	//allJsonFeedback.show(false);
+	
+	StreamingQuery queryConsole = allJsonFeedback
+		  .writeStream()
+		  .format("console")
+		  .start();
+
+	StreamingQuery query = allJsonFeedback
+		  .writeStream().partitionBy("timestamp")
+		  .format("json").queryName("JsonOutput")
+		  .option("path","feedbackOutput")
+		  .option("checkpointLocation","checkpoint-feedback")
+		  .start();
+	
+	try{
+		queryConsole.awaitTermination();
+		query.awaitTermination();
+	} catch (StreamingQueryException e) {
+		e.printStackTrace();
+	}
 
 }
  
