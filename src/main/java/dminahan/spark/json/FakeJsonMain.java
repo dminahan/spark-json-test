@@ -7,16 +7,22 @@ package dminahan.spark.json;
 import static org.apache.spark.sql.functions.col;
 //import static org.apache.spark.sql.functions.explode;
 import static org.apache.spark.sql.functions.substring_index;
+import static org.apache.spark.sql.functions.unix_timestamp;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.ForeachFunction;
+import org.apache.spark.sql.streaming.StreamingQuery;
+import org.apache.spark.sql.streaming.StreamingQueryException;
 import org.apache.spark.sql.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dminahan.spark.json.filters.RecordFilter;
 import dminahan.spark.json.models.JsonRecord;
+import dminahan.spark.json.models.JsonFeedbackRecord;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
