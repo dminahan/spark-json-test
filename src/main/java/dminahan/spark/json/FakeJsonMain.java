@@ -115,7 +115,7 @@ public void run(SparkSession sparkSession) {
 	          .json("jsonExamples");
     records.printSchema();
 	
-    records.createOrReplaceTempView("haven_records");
+    records.createOrReplaceTempView("jsonExamples");
 	
     Dataset<Row> members=records.select(
 	    col("state"),
@@ -137,7 +137,7 @@ public void run(SparkSession sparkSession) {
 		                             .filter(JsonFilters::filterInvalidJsonMember);//Filter out invalid records
 	validJsonRecords.printSchema();
 	
-	Dataset<JsonFeedbackRecord> goodJsonRecords=validJsonRecords.filter(JsonFilters::filterGoodRecords)
+	Dataset<JsonFeedbackRecord> goodJsonRecords=validJsonRecords.filter(RecordFilters::filterGoodRecords)
 		           .withColumn("feedback", functions.lit(1))
 		           .drop("origintor")
 		           .drop("updated")
@@ -145,7 +145,7 @@ public void run(SparkSession sparkSession) {
 	goodJsonRecords.printSchema();
 	//goodJsonRecords.show(false);
 	
-	Dataset<JsonFeedbackRecord>badJsonRecords=validJsonRecords(JsonFilters::filterBadRecords)
+	Dataset<JsonFeedbackRecord>badJsonRecords=validJsonRecords(RecordFilters::filterBadRecords)
 		            .withColumn("feedback", functions.lit(0))
 		            .drop("originator")
 		            .drop("updated")
