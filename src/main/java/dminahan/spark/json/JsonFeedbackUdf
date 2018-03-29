@@ -1,0 +1,32 @@
+package dminahan.spark.json;
+
+import dminahan.json.filters.RecordFilter;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.api.java.UDF1;
+import org.apache.spark.sql.types.DataTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class FeedbackUdf implements UDF1<String Integer> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackUdf.class);
+    
+    private SparkSession sparkSession;
+    
+    public FeedbackUdf(SparkSession sparkSession){
+      this.sparkSession=sparkSession;
+      this.register();
+    }
+    
+    private void register() {
+      sparkSession.udf().register("determineFeedback", this, DataTypesIntegerType);
+    }
+    
+    public Integer call(String state) {
+       if(Recordfilter.inGoodStateList(state)) {
+         return 1;
+       } else if(RecordFilter.inBadStateList(state)) {
+         return 0;
+       }
+       return -1;
+    }
+}
