@@ -165,11 +165,14 @@ public void run(SparkSession sparkSession) {
 	
 	StreamingQuery queryConsole = allJsonFeedback
 		  .writeStream()
+		  .trigger(Trigger.ProcessingTime("60 seconds"))
 		  .format("console")
 		  .start();
 
 	StreamingQuery query = allJsonFeedback
-		  .writeStream().partitionBy("timestamp")
+		  .writeStream()
+		  .trigger(Trigger.ProcessingTime("60 seconds"))
+		  //.partitionBy("timestamp")
 		  .format("json").queryName("JsonOutput")
 		  .option("path","feedbackOutput")
 		  .option("checkpointLocation","checkpoint-feedback")
