@@ -6,6 +6,7 @@ package dminahan.spark.json;
 
 import static org.apache.spark.sql.functions.col;
 //import static org.apache.spark.sql.functions.explode;
+import static org.apache.spark.sql.functions.callUDF;
 import static org.apache.spark.sql.functions.substring_index;
 import static org.apache.spark.sql.functions.unix_timestamp;
 
@@ -58,6 +59,9 @@ public void init() {
 }
    
 public void run(SparkSession sparkSession) {
+	
+	FeedbackUdf feedbackUdf = new FeedbackUdf(sparkSession);
+	
    Dataset<Row> records = sparkSession.read().json("fakeJson.json");
    records.printSchema();
    records.show(false);
@@ -125,9 +129,11 @@ public void run(SparkSession sparkSession) {
 	)
 	.withColumn("uuid", substring_index(col("originator"), ":", -1))
 	.withColumn("system", substring_index(col("originator"), ":", 1))
-	.withColumn("feedback", functions.lit("-1").cast("int"))
+	//.withColumn("feedback", functions.lit("-1").cast("int"))
+	.withColumn("feedback", callUDF("determineFeedback", col("state")))
 	.withColumn("timestamp", unix_timestamp(col("modified")"yyyy-MM-dd'T'HH:mm:ss:SSS'Z'"))
 	.toDF("state","updated","user","originator","uuid","system","feedback","timestamp");
+	//TODO: Filter on row and filter out bad states
 	
 	members.printSchema();
 	//members.show(false);
