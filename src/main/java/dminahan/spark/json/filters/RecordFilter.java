@@ -3,6 +3,7 @@ package dminahan.spark.json.filters;
 import dminahan.spark.json.models.JsonRecord;
 import org.apache.commons.lang.StringUtils;
 //import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.sql.Row;
 
 import java.util.function.Predicate;
 import java.util.Arrays;
@@ -24,6 +25,19 @@ public class RecordFilter {
       "NOTUSEFUL"        
    };
 
+   public static boolean filterInvalidRowMember(Row row) {
+      Predicate<Row> conditions=e -> StringUtils.isNotBlank(e.getAs("user"));
+      conditions=conditions.and(e -> StringUtils.isNotBlank(e.getAs("state")));
+      conditions=conditions.and(e -> StringUtils.isNotBlank(e.getAs("updated")));
+      conditions=conditions.and(e->StringUtils.isNotBlank(e.getAs("source"))&&((String)e.getAs("source")).startsWith("foo"));
+      conditions=conditions.and(e ->(inGoodStateList(e.getAs("state"))||(inBadStateList(e.getAs("state"))));
+      RecordFilter.isValidRow(conditions,row);
+   }
+                                
+   public static<Row> boolean isValidRow(Predicate<Row> condition, Row row) {
+      return row !=null && condition.test(row);
+   }
+                                
    public static boolean filterInvalidRecord(JsonRecord jsonRecord) {
        Predicate<JsonRecord> conditions=e -> StringUtils.isNotBlank(e.getUser());
        conditions=conditions.and(e->StringUtils.isNotBlank(e.getState()));
